@@ -15,13 +15,14 @@ class KtFacebook extends Facebook
         }
     }
 
+    private $dialog_oauth_url = 'http://www.facebook.com/dialog/oauth/';
     /**
      * Session is not available. However, we can still get the access_token
      * by using the old session_key, client_key. If it has already converted,
      * don't do the conversion again to save us the round trip time. 
      */
     protected $tokenSessionLoaded = false;
-
+    
     /**
      *
      *
@@ -44,6 +45,26 @@ class KtFacebook extends Facebook
         }
     }
 
+    /**
+     * $params: an array of permissions
+     * $response_type : "token" | "code" | "code_and_token"
+     */
+    public function dialogOauth($params=array(), $response_type='token'){
+        $session = $this->getSession();
+        if(!$session){
+            $redirect_url = FB_CANVAS_URL."?".$_SERVER['QUERY_STRING']."&installed=1";
+            $redirect_url = $this->kt->stripped_kt_args($redirect_url);
+        
+            $params = array( "scope" => join(',', $params),
+                             "client_id" => FB_ID,
+                             "redirect_uri" => $redirect_url,
+                             "response_type" => $response_type
+                             );
+            $oauth_url = $this->dialog_oauth_url ."?".http_build_query($params);
+            $this->redirect($oauth_url);
+        }
+    }
+    
     //
     // Overridden
     //
