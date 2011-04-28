@@ -21,8 +21,10 @@ $kt = new Kontagent(KT_API_SERVER, KT_API_KEY, SEND_MSG_VIA_JS);
 //$session = $facebook->fbNativeAppRequireLogin(array('req_perms'=>'publish_stream,user_birthday,user_relationships',
 //                                                    'display'=>'popup')); //lihchen
 
-$session = $facebook->fbNativeAppRequireLogin(array('canvas'=>1, 'fbconnect'=>0,
-                                                    'req_perms'=>'publish_stream,user_birthday,user_relationships')); //lihchen
+//$session = $facebook->fbNativeAppRequireLogin(array('canvas'=>1, 'fbconnect'=>0,
+//                                                    'req_perms'=>'publish_stream,user_birthday,user_relationships')); //lihchen
+
+$facebook->dialogOauth();
 
 
 // We may or may not have this data based on a $_GET or $_COOKIE based session.
@@ -137,7 +139,8 @@ if(isset($_POST["clicked_button"])){
 
 ?>
 <!doctype html>
-<html>
+<html
+xmlns:kt="http://www.kontagent.com/2011/xhtml">
   <head>
     <title>php-sdk</title>
     <style>
@@ -155,19 +158,20 @@ if(isset($_POST["clicked_button"])){
   </head>
   <body>
     <div id="fb-root"></div>
-    <script src="http://connect.facebook.net/en_US/all.js?v=44"></script>
-
+    <script src="http://connect.facebook.net/en_US/all.js"></script>
+    <script src="jquery-1.4.2.min.js"></script>
     <script>CONTROL_KT_RUN = true;</script>
-    <script src="../kt/js/kontagent.js?v=44"></script>
-    <script src="../kt/js/kt_facebook.js?v=44"></script>
+    <script src="../kt/js/kontagent.js?v=45"></script>
+    <script src="../kt/js/kt_facebook.js?v=45"></script>
     <script>
           kt.post_invite_click_cb = function(data){
           }  
           kt.run();
     </script>
           
-          
-    <fb:like ref="helloworld" font="arial"></fb:like>
+    <div id="fb_button"></div>
+              <kt:like>hello world</kt:like>
+              <!--<fb:like ref="helloworld" font="arial"></fb:like>-->
 
     <h1><a href="">php-sdk</a></h1>
     <?php if ($me): ?>
@@ -394,18 +398,20 @@ function test_fb_delete_request_content(){
 }
 
 function test_fb_oauth(){
-  FB.ui(
+    // working example: http://www.facebook.com/connect/uiserver.php?app_id=143737522328410&method=permissions.request&display=page&next=http%3A%2F%2Fapps.facebook.com%2Fkontagent_php%2F%3Finstalled%3D1&response_type=token&canvas=1&perms=email%2Cuser_birthday
+    FB.ui(
     {
       method: 'oauth',
-      /* client_id: '143737522328410', */
+      app_id: '143737522328410',
+      api_key: 'e21cbcdc7526dbb51694fa3dbf3541f6',
       /* scope: 'email, publish_stream, offline_access, user_checkins', */
-      /* redirect_uri: 'http://apps.facebook.com/kontagent_php/' */
+      redirect_uri: 'http://apps.facebook.com/kontagent_php/?installed=1'
     },
     function (response) {
       if (response && response.post_id) {
-	alert('success');
+          alert('success');
       } else {
-	alert('failure');
+          alert('failure');
       }
     }
   );
@@ -515,7 +521,7 @@ function test_js_multi_goal_count(){
     kt.track_multi_goal_counts(kt.get_session_uid(), {1:10, 2:20});
 }
 
-
+$("#fb_button").html('<fb:like ref="helloworld" font="arial"></fb:like>');
 
 </script>
       
