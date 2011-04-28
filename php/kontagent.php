@@ -65,39 +65,12 @@ class Kontagent
     
     public function gen_long_tracking_code()
     {
-        return substr(uniqid(rand()), -16);
+        return substr(uniqid(rand()), -32);
     }
     
     public function gen_short_tracking_code()
     {
-        $t=explode(" ",microtime());
-        $a = $t[1];
-        $b = round($t[0]*mt_rand(0,0xfffff));
-        
-        $c = mt_rand(0,0xfffffff);
-        $tmp_binary = base_convert($c, 10, 2);
-        $c = $c << (8 - strlen($tmp_binary));
-      
-        $r =  dechex($a ^ $b ^ $c);
-        if (strlen($r) > 8)
-        {
-            // handle a 64 bit arch.
-            $r = substr($r, -8);
-        }
-
-        if (strlen($r) < 8)
-        {
-            $num_trailing_zeros = 8 - strlen($r);
-            for($i = 0; $i < $num_trailing_zeros; $i++)
-            {
-                $r.= dechex(rand(0, 15));
-            }
-        }
-
-        // kt_short_tag is used in stripped_kt_args().
-        global $kt_short_tag;
-        $kt_short_tag = $r;
-        return $r;
+        return substr(uniqid(rand()), -32);
     }
 
     public function get_current_url()
