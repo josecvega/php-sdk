@@ -18,7 +18,6 @@ FB.Content.postTarget = function(opts) {
 //
 if(window.KT_API_SERVER && window.KT_API_KEY)
 {
-	var KT_CB_PATCHED;
   var KT_FB = {};
   KT_FB.ui = FB.ui;
   KT_FB.api = FB.api;
@@ -76,8 +75,9 @@ if(window.KT_API_SERVER && window.KT_API_KEY)
             }
 	  }
 
+          var kt_cb = null;
 	  if(cb!=undefined && cb != null){
-	    var kt_cb = function(resp){
+	    kt_cb = function(resp){
 	      if(resp && resp.post_id){
 		// send a pst stream msg.
 		KT_FB.kt.kt_outbound_msg('pst',
@@ -88,7 +88,7 @@ if(window.KT_API_SERVER && window.KT_API_KEY)
 	      cb(resp); //call the original callback function
 	    };
 	  }else{
-	    var kt_cb = function(resp){
+	    kt_cb = function(resp){
 	      if(resp && resp.post_id){
 		// send a pst stream msg.
 		KT_FB.kt.kt_outbound_msg('pst',
@@ -103,7 +103,7 @@ if(window.KT_API_SERVER && window.KT_API_KEY)
 	else if(params['method'] == 'apprequests'){
 	  //Stick uid, uuid, st1,st2,st3 in data
 	  params['data'] = KT_FB.kt.append_kt_tracking_info_to_apprequests(params['data'],uuid, st1, st2, st3);
-		KT_CB_PATCHED = function(resp){
+	  function kt_cb_impl(resp){
 	    if(resp){
 	      KT_FB.kt.kt_outbound_msg('ins',
 				       { u : uuid, s : uid,
@@ -113,14 +113,15 @@ if(window.KT_API_SERVER && window.KT_API_KEY)
 	    }
 	  }
 
+          var kt_cb = null;
 	  if(cb != undefined && cb!= null){
-	    var kt_cb = function(resp){
-	      KT_CB_PATCHED(resp);
+	    kt_cb = function(resp){
+	      kt_cb_impl(resp);
 	      cb(resp);
 	    };
 	  }else{
-	    var kt_cb = function(resp){
-	      KT_CB_PATCHED(resp);
+	    kt_cb = function(resp){
+	      kt_cb_impl(resp);
 	    };
 	  };
 	  KT_FB.ui(params, kt_cb);
@@ -129,7 +130,7 @@ if(window.KT_API_SERVER && window.KT_API_KEY)
 	  if(params['link'] != undefined && params['link'] != null)
 	    params['link'] = KT_FB.kt.gen_stream_link(params['link'], uuid, st1, st2, st3);
 
-	  KT_CB_PATCHED = function(resp){
+	  function kt_cb_impl(resp){
 	    if(resp){
 	      KT_FB.kt.kt_outbound_msg('pst',
 				       { tu : 'stream', u : uuid, s : uid,
@@ -138,14 +139,15 @@ if(window.KT_API_SERVER && window.KT_API_KEY)
 	    }
 	  }
 
+          var kt_cb = null;
 	  if(cb!= undefined && cb !=null){
-	    var kt_cb = function(resp){
-	      KT_CB_PATCHED(resp);
+	    kt_cb = function(resp){
+	      kt_cb_impl(resp);
 	      cb(resp);
 	    };
 	  }else{
-	    var kt_cb = function(resp){
-	      KT_CB_PATCHED(resp);
+	    kt_cb = function(resp){
+	      kt_cb_impl(resp);
 	    };
 	  }
 	  KT_FB.ui(params, kt_cb);
