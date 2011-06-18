@@ -29,9 +29,10 @@ if(window.KT_API_SERVER && window.KT_API_KEY)
       return Math.uuid().substring(0,16);
     }
   };
-
+  
   FB.ui = function(params, cb){
     var session = FB.getSession();
+    var kt_cb_impl = null;
     if(session && session.uid)
     {
       var uid = session.uid;
@@ -103,7 +104,7 @@ if(window.KT_API_SERVER && window.KT_API_KEY)
 	else if(params['method'] == 'apprequests'){
 	  //Stick uid, uuid, st1,st2,st3 in data
 	  params['data'] = KT_FB.kt.append_kt_tracking_info_to_apprequests(params['data'],uuid, st1, st2, st3);
-	  function kt_cb_impl(resp){
+	  kt_cb_impl = function(resp){
 	    if(resp){
 	      KT_FB.kt.kt_outbound_msg('ins',
 				       { u : uuid, s : uid,
@@ -111,7 +112,7 @@ if(window.KT_API_SERVER && window.KT_API_KEY)
 					 r : resp.request_ids.join(",")
 				       });
 	    }
-	  }
+	  };
 
           var kt_cb = null;
 	  if(cb != undefined && cb!= null){
@@ -130,14 +131,14 @@ if(window.KT_API_SERVER && window.KT_API_KEY)
 	  if(params['link'] != undefined && params['link'] != null)
 	    params['link'] = KT_FB.kt.gen_stream_link(params['link'], uuid, st1, st2, st3);
 
-	  function kt_cb_impl(resp){
+	  kt_cb_impl = function(resp){
 	    if(resp){
 	      KT_FB.kt.kt_outbound_msg('pst',
 				       { tu : 'stream', u : uuid, s : uid,
 				         st1 : st1, st2 : st2, st3 : st3 }
 				      );
 	    }
-	  }
+	  };
 
           var kt_cb = null;
 	  if(cb!= undefined && cb !=null){
