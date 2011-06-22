@@ -30,18 +30,25 @@ class KtFacebook extends Facebook
     public function fbNativeAppRequireLogin($params=array())
     {
         $session = $this->getSession();
+        $me = null;
+
+        // check if the user is logged in and the session is good.
         if($session){
+            try {
+                $me = $this->api('/me');
+            } catch (FacebookApiException $e) { }
+        }
+
+        // if user is logged in with a good session, return the session
+        // otherwise redirect them to the login page.
+        if ($me) { 
             return $session;
-        }
-        
-        $http_referer = $_SERVER['HTTP_REFERER'];
-        if(preg_match('/http:\/\/apps.facebook.com*/', $http_referer))
-        {
-            $this->redirect($this->getLoginUrl($params, false));
-        }
-        else
-        {
-            $this->redirect($this->getLoginUrl($params));
+        } else {  
+            if(isset($_SERVER['HTTP_REFERER']) && preg_match('/^https?:\/\/apps\.facebook\.com.*/', $_SERVER['HTTP_REFERER'])) {
+                $this->redirect($this->getLoginUrl($params, false));
+            } else {
+                $this->redirect($this->getLoginUrl($params));
+            }
         }
     }
 
