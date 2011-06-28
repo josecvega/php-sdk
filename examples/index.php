@@ -287,13 +287,13 @@ echo print_r($facebook->getSignedRequest(),1);
   if(window.SESSION)
   {
       FB.init({
-            appId  : '143737522328410',
+            appId  : <?php echo FB_ID;?>,
             xfbml  : true,  // parse XFBML
             session : SESSION
              });
   }else{
       FB.init({
-            appId  : '143737522328410',
+            appId  : <?php echo FB_ID;?>,
             xfbml  : true,  // parse XFBML
              });
   }
